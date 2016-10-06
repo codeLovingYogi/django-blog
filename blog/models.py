@@ -34,3 +34,22 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text
+
+PYTHON = 'Python'
+JAVASCRIPT = 'JavaScript'
+RUBY = 'Ruby'
+LANGUAGE_CHOICES = (
+    (PYTHON, 'Python'),
+    (JAVASCRIPT, 'JavaScript'),
+    (RUBY, 'Ruby'),
+)
+
+class Snippet(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(max_length=100, blank=True, default='')
+    code = models.TextField()
+    linenos = models.BooleanField(default=False)
+    language = models.CharField(choices=LANGUAGE_CHOICES, default='PYTHON', max_length=100)
+
+    class Meta:
+        ordering = ('created',)
