@@ -13,16 +13,17 @@ from .models import Post, Comment, Snippet, LANGUAGE_CHOICES
 #         model = Group
 #         fields = ('url', 'name')
 
-class UserSerializer(serializers.ModelSerializer):
-    snippets = serializers.PrimaryKeyRelatedField(many=True, queryset=Snippet.objects.all())
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    snippets = serializers.HyperlinkedRelatedField(many=True, view_name='snippet-detail', read_only=True)
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'snippets', 'groups')
+        fields = ('url', 'pk', 'username', 'snippets')
 
-class SnippetSerializer(serializers.ModelSerializer):
+class SnippetSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
-    
+   
     class Meta:
         model = Snippet
-        fields = ('id', 'owner', 'title', 'code', 'linenos', 'language')
+        fields = ('url', 'pk', 'owner',
+                  'title', 'code', 'linenos', 'language')
