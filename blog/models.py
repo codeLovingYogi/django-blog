@@ -45,6 +45,7 @@ LANGUAGE_CHOICES = (
 )
 
 class Snippet(models.Model):
+    owner = models.ForeignKey('auth.User', related_name='snippets')
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100, blank=True, default='')
     code = models.TextField()
