@@ -51,6 +51,7 @@ router = DefaultRouter(schema_title='Pastebin API')
 router.register(r'snippets', views.SnippetViewSet)
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
+router.register(r'posts', views.PostViewSet)
 
 # Login and logout views for the browsable API
 urlpatterns += [

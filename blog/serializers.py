@@ -12,7 +12,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ('url', 'pk', 'username', 'groups', 'snippets')
+        fields = ('url', 'pk', 'username', 'groups', 'snippets', 'posts')
 
 class SnippetSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
@@ -21,3 +21,11 @@ class SnippetSerializer(serializers.HyperlinkedModelSerializer):
         model = Snippet
         fields = ('url', 'pk', 'owner',
                   'title', 'code', 'linenos', 'language')
+
+class PostSerializer(serializers.HyperlinkedModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+   
+    class Meta:
+        model = Post
+        fields = ('url', 'pk', 'owner',
+                  'title', 'text', 'created_date', 'published_date')

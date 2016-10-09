@@ -5,7 +5,7 @@ from .forms import PostForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
 from rest_framework import mixins, generics, permissions, viewsets
-from .serializers import UserSerializer, SnippetSerializer, GroupSerializer
+from .serializers import UserSerializer, SnippetSerializer, GroupSerializer, PostSerializer
 from .permissions import IsOwnerOrReadOnly
 
 def post_list(request):
@@ -22,7 +22,7 @@ def post_new(request):
         form = PostForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
-            post.author = request.user
+            post.owner = request.user
             post.save()
             return redirect('post_detail', pk=post.pk)
     else:
@@ -36,7 +36,7 @@ def post_edit(request, pk):
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
             post = form.save(commit=False)
-            post.author = request.user
+            post.owner = request.user
             post.published_date = timezone.now()
             post.save()
             return redirect('post_detail', pk=post.pk)
@@ -108,6 +108,19 @@ class SnippetViewSet(viewsets.ModelViewSet):
     """
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                          IsOwnerOrReadOnly,)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+class PostViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions.
+    """
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                           IsOwnerOrReadOnly,)
 
