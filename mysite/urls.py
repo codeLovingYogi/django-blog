@@ -15,20 +15,26 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-#from rest_framework import routers
+from rest_framework.routers import DefaultRouter
 from blog import views
 admin.autodiscover()
 
-# router = routers.DefaultRouter()
-# router.register(r'users', views.UserViewSet)
-# router.register(r'groups', views.GroupViewSet)
+# Create a router and register our viewsets with it.
+router = DefaultRouter(schema_title='Pastebin API')
+router.register(r'snippets', views.SnippetViewSet)
+router.register(r'users', views.UserViewSet)
+router.register(r'groups', views.GroupViewSet)
+router.register(r'posts', views.PostViewSet)
 
 # Wire up our API using automatic URL routing.
+# Login and logout views for the browsable API
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
     url(r'', include('blog.urls')),
+    url(r'^admin/', admin.site.urls),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}),
-    # url(r'^', include(router.urls)),
+    url(r'^api/', include(router.urls)),
+    url(r'^api-auth/', include('rest_framework.urls',
+                               namespace='rest_framework')),
 ]
